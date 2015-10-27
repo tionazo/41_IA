@@ -1,0 +1,42 @@
+funcion.ejemplo1 <- function( matriz, vector, c=1 )
+  {
+  ## matriz: Es una matriz cuadrada de dimen n x n
+  ## vector: Vector de tipo numérico
+  ## c : constante por defecto = 1
+
+
+  resultado <- c
+  
+   if( sum(vector) > 5 )
+   {
+    vector.quad <- vector^2
+    suma.vector.quad <- sum(vector.quad)
+    cat('suma del vector mayor que 5 \n')
+   } else
+   {
+    resultado <- c * sum(vector)
+    cat('suma =', sum(vector), '\n' )
+   }
+
+   indices <- seq( from=0, to=100, by=2 )
+   
+
+   for( i in indices )
+   {
+    resultado <- resultado + i
+   }
+   
+   cat('El resultado del bucle for es', resultado)
+   
+   for( i in 1:100 )
+   {
+     }
+   
+   j <- 0
+   while( j < sum(resultado ) )
+   {
+    j <- j + 1
+   }
+
+  objeto.resultado <- list( indices= indices, resultado= resultado, suma.vector= suma.vector.quad)
+  }

@@ -1,0 +1,86 @@
+#Perceptrón Multicapa
+
+#Espirales concentricas
+load("espirales.concentricas.dat")
+library(nnet)
+muestra <- sample( 1:200, 160)
+
+#Estimamos parámetros con 2, 5, 15 neuronas ocultas
+espirales.perc2 <- nnet( espirales.concentricas[muestra, 1:2], class.ind( espirales.concentricas[muestra, 3] ) , size=2 )
+espirales.perc5 <- nnet( espirales.concentricas[muestra, 1:2], class.ind( espirales.concentricas[muestra, 3] ) , size=5 )
+espirales.perc15 <- nnet( espirales.concentricas[muestra, 1:2], class.ind( espirales.concentricas[muestra, 3] ) , size=15 )
+espirales.perc30 <- nnet( espirales.concentricas[muestra, 1:2], class.ind( espirales.concentricas[muestra, 3] ) , size=30, decay=1e-3 )
+
+#Calculamos el error para los conjuntos de entrenamiento y test.
+espirales.pred.ent5 <- predict( espirales.perc5, espirales.concentricas[muestra, 1:2], type="raw" )
+espirales.pred.ent5.class <- apply( espirales.pred.ent5, MARGIN=1, FUN='which.is.max')
+table( espirales.pred.ent5.class, espirales.concentricas[muestra, 3] )
+sum( diag( table( espirales.pred.ent5.class, espirales.concentricas[muestra, 3] ) ) )/170
+espirales.pred.test5 <- predict( espirales.perc5, espirales.concentricas[-muestra, 1:2], type="raw" )
+espirales.pred.test5.class <- apply( espirales.pred.test5, MARGIN=1, FUN='which.is.max')
+table( espirales.pred.ent5.class, espirales.concentricas[muestra, 3] )
+sum( diag( table( espirales.pred.test5.class, espirales.concentricas[-muestra, 3] ) ) )/30
+
+x5 <- seq( -1.5, 1.5, by=0.1 )
+y5 <- seq( -1.5, 1.5, by=0.1 )
+imagen5 <- outer( x5, y5, function(x,y) (predict( espirales.perc5, cbind(x,y), type='raw' ) )[,1] )
+image(x5,y5,imagen5)
+
+#Repetimos los experimentos anteriores para 15 y 30 neuronas:
+
+espirales.pred.ent15 <- predict( espirales.perc15, espirales.concentricas[muestra, 1:2], type="raw" )
+espirales.pred.ent15.class <- apply( espirales.pred.ent15, MARGIN=1, FUN='which.is.max')
+table( espirales.pred.ent15.class, espirales.concentricas[muestra, 3] )
+sum( diag( table( espirales.pred.ent15.class, espirales.concentricas[muestra, 3] ) ) )/160
+espirales.pred.test15 <- predict( espirales.perc15, espirales.concentricas[-muestra, 1:2], type="raw" )
+espirales.pred.test15.class <- apply( espirales.pred.test15, MARGIN=1, FUN='which.is.max')
+table( espirales.pred.ent15.class, espirales.concentricas[muestra, 3] )
+sum( diag( table( espirales.pred.test15.class, espirales.concentricas[-muestra, 3] ) ) )/40
+
+x15 <- seq( -1.5, 1.5, by=0.1 )
+y15 <- seq( -1.5, 1.5, by=0.1 )
+imagen15 <- outer( x15, y15, function(x,y) (predict( espirales.perc15, cbind(x,y), type='raw' ) )[,1] )
+image(x15,y15,imagen15)
+
+#Con 30 neuronas en la capa oculta, claramente comienza a sobreajustar los datos.
+
+espirales.pred.ent30 <- predict( espirales.perc30, espirales.concentricas[muestra, 1:2], type="raw" )
+espirales.pred.ent30.class <- apply( espirales.pred.ent30, MARGIN=1, FUN='which.is.max')
+table( espirales.pred.ent30.class, espirales.concentricas[muestra, 3] )
+sum( diag( table( espirales.pred.ent30.class, espirales.concentricas[muestra, 3] ) ) )/160
+espirales.pred.test30 <- predict( espirales.perc30, espirales.concentricas[-muestra, 1:2], type="raw" )
+espirales.pred.test30.class <- apply( espirales.pred.test30, MARGIN=1, FUN='which.is.max')
+table( espirales.pred.ent30.class, espirales.concentricas[muestra, 3] )
+sum( diag( table( espirales.pred.test30.class, espirales.concentricas[-muestra, 3] ) ) )/40
+
+x30 <- seq( -1.5, 1.5, by=0.1 )
+y30 <- seq( -1.5, 1.5, by=0.1 )
+imagen30 <- outer( x30, y30, function(x,y) (predict( espirales.perc30, cbind(x,y), type='raw' ) )[,1] )
+image(x30,y30,imagen30)
+
+#El término de regularización ayuda a evitar el problema.
+espirales.perc30 <- nnet( espirales.concentricas[muestra, 1:2], class.ind( espirales.concentricas[muestra, 3] ) , size=30, decay=0.001, maxit=150 )
+
+
+#Problema de clasificación de dígitos manuscritos
+pendigits.nnet10 <- nnet( pendigits.muestra.tra[, 2:257], class.ind( pendigits.muestra.tra[,1]) , size=7, MaxNWts=2500, decay=5e-3, entropy=T)
+pendigits.pred10 <- predict( pendigits.nnet10, pendigits.muestra.test[,2:257], type="raw")
+pendigits.pred.class.10 <- apply( pendigits.pred10, MARGIN=1, FUN='which.is.max')
+tabla <- table( pendigits.pred.class.10, pendigits.muestra.test[,1] )
+tabla
+acierto <- sum(diag(tabla) )/sum(tabla)
+acierto
+
+#Problema de clasificacion de documentos. Base 380.
+doc.bin.304.nnet <- nnet( doc.bin.304.tra[, 1:514], class.ind( doc.bin.304.tra[,515]) , size=5, MaxNWts=3000, decay=1e-3, entropy=T)
+doc.bin.304.nnet.test <- predict( doc.bin.304.nnet, doc.bin.304.test[,1:514], type="raw")
+clase.doc.bin.304.nnet.test <- apply( doc.bin.304.nnet.test, MARGIN=1, FUN='which.is.max')
+tabla <- table(clase.doc.bin.304.nnet.test , doc.bin.304.test[,515] )
+tabla
+acierto <- sum(diag(tabla) )/sum(tabla)
+acierto
+
+
+
+
+

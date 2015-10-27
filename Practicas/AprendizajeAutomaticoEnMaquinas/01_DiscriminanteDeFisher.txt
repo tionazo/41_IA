@@ -1,0 +1,43 @@
+analisis.disc <- function( matriz=normales.solapadas, dimen.class=4, p.train=0.8 )
+{
+cat("Uso: analisis.disc( matriz datos, dimension clasificacion, porcentaje de puntos entrenamiento)" )
+
+library(MASS)
+dim.x <- dim(matriz)[[2]]-1
+dim.y <- dim(matriz)[[1]]
+n.clases <- length(unique(matriz[,dim.x+1] ) )
+train <- sample( 1:dim.y, floor( p.train * dim.y) )
+npuntos.test <- dim.y - length(train)
+
+lda.matriz <- lda( matriz[,1:dim.x], matriz[,dim.x+1], subset=train )
+plot( lda.matriz, dimen=min(dimen.class,4) )
+test.lda <- predict( lda.matriz, matriz[ -train, 1:dim.x], dimen=dimen.class)
+
+###########################################
+# Para obtener la evolución con la dimensión
+###########################################
+
+dimension.vec <- seq(1, dimen.class, by=1)
+error.test <- as.numeric(vector( length=length(dimension.vec) ) )
+error.ent <- as.numeric( vector( length=length(dimension.vec) ) )
+j <- 1
+
+for( i in dimension.vec)
+{
+error.ent[j] <- sum( predict( lda.matriz, matriz[ train, 1:dim.x],
+dimen=i)$class != matriz[train, dim.x+1] )/length(train)
+error.test[j] <- sum( predict( lda.matriz, matriz[ -train, 1:dim.x],
+dimen=i)$class != matriz[-train, dim.x+1])/npuntos.test
+j <- j+1
+}
+
+error <- sum( test.lda$class != matriz[-train, dim.x+1] )/npuntos.test
+posteriors.lda <- apply( test.lda$posterior, MARGIN=1, FUN='max')
+matriz.confusion <- table( matriz[-train, dim.x+1], test.lda$class )
+
+resultado <- list( lda=lda.matriz, clase.test=test.lda$class,
+clase.posterior=posteriors.lda, error=error, error.ent = error.ent,
+error.test= error.test,
+matriz.confusion=matriz.confusion, muestra=train )
+resultado
+}

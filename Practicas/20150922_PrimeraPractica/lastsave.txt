@@ -1,0 +1,50 @@
+
+R version 3.1.1 (2014-07-10) -- "Sock it to Me"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+
+R es un software libre y viene sin GARANTIA ALGUNA.
+Usted puede redistribuirlo bajo ciertas circunstancias.
+Escriba 'license()' o 'licence()' para detalles de distribucion.
+
+R es un proyecto colaborativo con muchos contribuyentes.
+Escriba 'contributors()' para obtener más información y
+'citation()' para saber cómo citar R o paquetes de R en publicaciones.
+
+Escriba 'demo()' para demostraciones, 'help()' para el sistema on-line de ayuda,
+o 'help.start()' para abrir el sistema de ayuda HTML con su navegador.
+Escriba 'q()' para salir de R.
+
+> local({pkg <- select.list(sort(.packages(all.available = TRUE)),graphics=TRUE)
++ if(nchar(pkg)) library(pkg, character.only=TRUE)})
+> local({pkg <- select.list(sort(.packages(all.available = TRUE)),graphics=TRUE)
++ if(nchar(pkg)) library(pkg, character.only=TRUE)})
+> chooseCRANmirror()
+> local({pkg <- select.list(sort(.packages(all.available = TRUE)),graphics=TRUE)
++ if(nchar(pkg)) library(pkg, character.only=TRUE)})
+> utils:::menuInstallLocal()
+Error en install.packages(choose.files("", filters = Filters[c("zip",  : 
+  no packages were specified
+> utils:::menuInstallPkgs()
+Aviso en install.packages(NULL, .libPaths()[1L], dependencies = NA, type = type) :
+ 'lib = "C:/Program Files/R/R-3.1.1/library"' is not writable
+Error en install.packages(NULL, .libPaths()[1L], dependencies = NA, type = type) : 
+  unable to install packages
+> utils:::menuInstallPkgs()
+Aviso en install.packages(NULL, .libPaths()[1L], dependencies = NA, type = type) :
+ 'lib = "C:/Program Files/R/R-3.1.1/library"' is not writable
+probando la URL 'http://cran.es.r-project.org/bin/windows/contrib/3.1/class_7.3-14.zip'
+Content type 'application/zip' length 100191 bytes (97 Kb)
+URL abierta
+downloaded 97 Kb
+
+package ‘class’ successfully unpacked and MD5 sums checked
+
+The downloaded binary packages are in
+        C:\Users\lgarciasa.inf\AppData\Local\Temp\RtmpMHGJw4\downloaded_packages
+> library(class)
+Mensajes de aviso perdidos
+package ‘class’ was built under R version 3.1.3 
+> help.search("regression")
+starting httpd help server ... done
+> 

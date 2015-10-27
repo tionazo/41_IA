@@ -1,0 +1,28 @@
+calcula.funcion.pert <- function( x, a, b )
+{
+# a corresponde al valor de la variable de entrada para el cual
+# la función de pertenencia vale 1
+# b corresponde al valor de la variable de entrada para el que la
+# función de pertenencia vale 0
+# x es la variable de entrada discretizada
+
+mu <- vector( length = length(x) , mode="numeric" )
+
+if( a < b )
+	{
+	mu[ x <= a] <- 1
+	mu[ x > a & x <= b ] <- (b - x[x > a & x <= b] )/(b-a)
+	mu[ x > b] <- 0
+	}
+
+if( a > b )
+	{
+	mu[ x <= b ] <- 0
+	mu[ x > b & x<= a ] <- ( x[x > b & x<= a] - b)/(a-b)
+	mu[ x > a] <- 1
+	}
+
+mu
+
+}
+ 

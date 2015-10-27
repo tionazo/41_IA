@@ -1,0 +1,5 @@
+"matriz1.edad" "matriz1.ingresos" "matriz1.educacion" "matriz1.respuesta" "matriz.quad.1" "matriz.quad.2" "matriz.quad.3" "matriz.quad.4" "resultado"
+"x1" 1 2 3 4 1 4 9 16 "aceptado"
+"x2" 5 6 7 8 25 36 49 64 "rechazado"
+"x3" 9 10 11 12 81 100 121 144 "rechazado"
+"x4" 13 14 15 16 169 196 225 256 "aceptado"

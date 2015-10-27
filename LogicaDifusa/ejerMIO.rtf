@@ -1,0 +1,395 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1348\cocoasubrtf170
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;\red0\green68\blue254;\red255\green39\blue18;\red85\green142\blue40;
+\red133\green0\blue175;\red217\green11\blue0;\red102\green177\blue50;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww14100\viewh15520\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+
+\f0\fs36 \cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf2 ### Ayuda de R\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 	### Proporciona todas las funciones relacionadas con regresi\'f3n\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf3 	help.search( "regression")\cf0 \
+\
+	### Carga la librer\'eda stats\
+\cf3 	library( stats)\cf0 \
+\
+	## Para ver las funciones implementadas dentro del paquete stats\
+	\cf3 help( package=stats )\cf0 \
+\
+	## Ayuda sobre una funci\'f3n concreta\
+	\cf3 help( loess )\cf0 \
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf2 ##### Objetos de R\cf0 \
+\cf2 ### Vectores, Matrices y Arrays, Data Frames, listas\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf4 ### Vectores:\cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf2 ### a) Vectores num\'e9ricos\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 \
+       \cf5  ## 1) Creaci\'f3n de vectores\cf0 \
+        \cf3 vector.ejemplo1.nume <- c( 5, 7, 9, 20)\cf0 \
+\
+        ## Creaci\'f3n vector con secuencia valores\
+        \cf6 vector.seq.0.100 <- seq( 1, 100, by=1 )\
+        vector.seq.0.100 <- 1:100\cf0 \
+        \cf3 vector.seq.0.1.100 <- seq( 0, 1, length=100)\cf0 \
+        \
+        ## Creaci\'f3n vector repitiendo valores o secuencias de valores\
+        \cf3 vector.300a.700r <- rep( c( 1, 0), c(300, 700) )\
+        vector.rep <- rep( c(1,0), 100)\cf0 \
+\
+        \cf5 ### 2) Acceso a las posiciones de un vector\cf0 \
+        \cf6 vector.seq.0.100[ c(3,8,20 ) ]\
+\cf0 \
+        # \'edndices negativos eliminan las posiciones se\'f1aladas por el vector de \'edndices\
+        \cf6 vector.seq.0.100[ -c(3,8,20 ) ]\
+\cf0 \
+        ### Se pueden utilizar expresiones l\'f3gicas para seleccionar elementos del vector\
+        \cf3 vector.seq.0.100[ vector.seq.0.100> 80 ]\
+        vector.seq.0.100[ vector.seq.0.100> 80 & vector.seq.0.100< 90 ]\
+        vector.seq.0.100[ vector.seq.0.100> 80 | vector.seq.0.100< 10 ]\cf0 \
+\
+      \cf5   ## 3) Operaciones con vectores\cf0 \
+        \cf3 vector.seq.0.100[ 1:10 ] + seq( 0, 1, length=10 )\
+        \
+        sqrt( vector.seq.0.100[ 1:10 ] )\
+        log( vector.seq.0.100[ 1:10 ] )\
+        ( vector.seq.0.100[ 1:10 ] )^3\
+        \
+        min( vector.seq.0.100[ 1:10 ] )\
+        max( vector.seq.0.100[ 1:10 ] )\
+        mean( vector.seq.0.100[ 1:10 ] )\
+        sd( vector.seq.0.100[ 1:10 ] )\
+        var( vector.seq.0.100[ 1:10 ] )\cf0 \
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf2 ### b) Vectores de tipo car\'e1cter\cf0 \
+        \cf6 vector.ejemplo.caracter <- c( "ana", "juan", "pedro")\
+        vector.ejemplo.caracter.rep <- rep( c( "ana", "juan", "pedro"), c(10, 30, 10 ) )\
+        vector.creditos.caracter <- rep( c("aceptado", "denegado"), c(300, 700) )\cf0 \
+        \
+        ### Se puede transformar un vector car\'b7cter en un factor\
+        \cf3 vector.ejemplo.caracter.rep.factor <- factor( vector.ejemplo.caracter.rep )\
+        vector.ejemplo.caracter.rep.factor\cf0 \
+\
+[1] ana   ana   ana   ana   ana   ana   ana   ana   ana   ana   juan  juan  juan  juan  juan\
+[16] juan  juan  juan  juan  juan  juan  juan  juan  juan  juan  juan  juan  juan  juan  juan\
+[31] juan  juan  juan  juan  juan  juan  juan  juan  juan  juan  pedro pedro pedro pedro pedro\
+[46] pedro pedro pedro pedro pedro\
+Levels: ana juan pedro\
+\
+        ## B\'fasqueda de expresiones en vectores car\'e1cter\
+       \cf6  match(  vector.creditos.caracter, "aceptado")\cf0 \
+        \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf7 ### b) Matrices\cf0 \
+    ### Creaci\'f3n de matrices\
+     \cf3 matriz.4.4 <- matrix( nrow=4, ncol=4, data=1:16 )\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 \
+     ### Si queremos llenar la matriz por filas\
+     \cf6 matriz.4.4 <- matrix( nrow=4, ncol=4, data=1:16, byrow=T )\
+\cf0 	###byrow=T , esto para crear por filas\
+\
+     ### Acceso a filas y columnas de la matriz\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf3      matriz.4.4[ c(2,3), 3:4 ]\cf0 \
+\
+     ###sino ponemos nada accedemos por columnas\
+     \cf3 matriz.4.4[ c(2,3), ]\cf0 \
+\
+	## Se puede acceder a una fila o columna utilizando condiciones l\'f3gicas\
+	##c, es el que concatena los elementos de cada suma\
+    \
+\cf3 	suma.fila.matriz.4.4 <- c(\
+    		sum( matriz.4.4[1, ] ),\
+   		 sum( matriz.4.4[2, ] ),\
+    		sum( matriz.4.4[3, ] ),\
+    		sum( matriz.4.4[4, ] ) )\cf0 \
+\
+	##Suma total de la matriz donde su suma sea menor que 40\
+\cf3    	 matriz.4.4[ suma.fila.matriz.4.4 < 40, ]\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 \
+	##Suma total de la matriz que est\'e9 entre 10 y 50\
+  \cf3   	matriz.4.4[ suma.fila.matriz.4.4 < 50 & suma.fila.matriz.4.4> 10 , ]\cf0 \
+    \
+     ### Funciones recursivas para aplicarlas a cada fila o columna de una matriz\
+     ### El objetivo de estas funciones es evitar la utilizaci\'f3n de bucles for etc.\
+     \cf3 suma.fila.matriz.4.4.apply <- apply( matriz.4.4, MARGIN=1, FUN='sum')\cf0 \
+	##nos  calcula el m\'e1ximo\
+     \cf3 max.columna.matriz.4.4 <- apply( matriz.4.4, MARGIN=2, FUN='max')\cf0 \
+	###seleccionar columnas que cumplen determinada condici\'f3n\
+     \cf3 matriz.4.4[ , max.columna.matriz.4.4 > 13 ]\cf0 \
+    \
+    \cf5 ### Operaciones con matrices\cf0 \
+\
+    ### Producto componente a componente\
+   \cf3  matriz.4.4 * matriz.4.4.quad\cf0 \
+\
+	## Producto matricial\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf3 	matriz.4.4 %*% matriz.4.4.quad\cf0 \
+    \
+	###multiplica filas por colimnas\
+\cf3 	t( matriz.4.4 )[1,]*matriz.4.4.quad[,1]\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 \
+	### Traspuesta de una matriz\
+	\cf3 t( matriz.4.4 )\
+\cf0 \
+	###utilizar antes y despu\'e9s el operador %% para obtener el producto matricial\
+	#la primera columna por la primera columna de la matriz 4.4, calcula el modulo de 	cada una de las columnas de la matriz 4.4\
+	\cf3 t( matriz.4.4 ) %*% matriz.4.4\
+\
+\cf0 	##otra forma de obtener el modulo de una columna\cf3 \
+	sum( matriz.4.4[,1]^2 )\
+\cf0 	###y con este obtengo el mismo efecto\
+	\cf3 crossprod( matriz.4.4 ) \cf0 ##obtengo las traspuesta de la matriz\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf3 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 	##otra forma de obtener el modulo de una columna\cf3 \
+	sum( matriz.4.4[,1]^2 ) \cf0 \
+    \
+    ### Dimensi\'f3n matriz, nombres filas columnas\
+    ## Asignar nombre a las filas\
+    \cf3 rownames(matriz.4.4)\cf0 \
+   \cf3  NULL\
+\cf0 \
+    ###cambio los nombres de la matriz\
+   \cf3  rownames(matriz.4.4) <- c("x1", "x2", "x3", "x4\'94)\cf0 \
+    \
+    ## Asignar nombre columnas\
+    \cf3 colnames(matriz.4.4) <- c("edad", "ingresos", "educacion", "respuesta")\
+    matriz.4.4\
+\cf0 \
+	##matriz 4x4 elevado al cuadrado\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf3 	matriz.4.4.quad<-matriz.4.4^2\cf0 \
+    \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf7 ### c) Arrays\cf0 \
+    ### Son objetos m\'e1s generales que las matrices pudiendo ser tridimensionales ...\
+    ### Creaci\'f3n (creamos un objeto que almacena 4 matrices 5x5\
+    \cf3 array.4.5.5 <- array( dim= c(5,5, 4), data=1:100 )\cf0 \
+\
+    ### Dimensi\'f3n array\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf3     dim( array.4.5.5)\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 \
+    #### Seleccionar elementos array\
+   \cf3  array.4.5.5[ , , c(3,4) ]\
+\cf0 \
+	##de la 4 matriz selecciones las filas 2.5 y las columnas 2.4\
+	#### Concatenaci\'f3n de arrays y matrices por filas y columnas\
+	### concatenar por filas, pongo las filas de la primera matriz a continuaci\'f3n de las 	de la segunda matriz\
+   \cf3  array.conc.fil <- rbind( array.4.5.5[ , , 3], array.4.5.5[ , , 4] )\
+    array.conc.fil\cf0 \
+    \
+	### concatenar por columnas\
+	\cf3 array.conc.col <- cbind( array.4.5.5[ , , 3], array.4.5.5[ , , 4] )\
+	array.conc.col\cf0 \
+    \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf7 ### d) Data frames\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 \
+	### Permiten incluir en el mismo objeto matrices, arrays, vectores num\'e9ricos y 	car\'e1cter\
+	### con la \'fanica restricci\'f3n de tener el mismo n\'famero de filas\
+	## esto es como si fuera el AS de mysql o php en el foreach\
+	### Creaci\'f3n data frames\
+\
+	##sirve para ver la dimension\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf3 	dim(matriz.4.4)\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 	###creo la matriz que me falta\cf3 \
+	resultado <-c ( "aceptado", "rechazado","aceptado\'94,\'94aceptado\'94  )\
+\cf0 \
+   	\cf3 ejemplo.data.frame <- data.frame( matriz1 =  matriz.4.4, matriz.quad = matriz.	4.4.quad, resultado = resultado)\
+    	ejemplo.data.frame\cf0 \
+ \
+	### Acceso a los elementos del data frame\
+     \cf3 ejemplo.data.frame[ c(2,3), ] \cf0 ## filas 2,3\
+    \cf3  ejemplo.data.frame[ , 9 ] \cf0 ## columna 9\
+\
+	##Con el $ puedo conseguir los diferentes\
+	## Equivalente a acceder a la columna 9 que se llama resultado\
+	\cf3 ejemplo.data.frame$resultado \
+\
+\cf0 	### Seleccionamos los dos primeros valores de esa columna.\
+     \cf3 ejemplo.data.frame$resultado[1:2]\cf0  \
+\
+	### Seleccion de todas columnas correspondientes a matriz1\
+     \cf3 ejemplo.data.frame[ , grep( "matriz1", colnames( ejemplo.data.frame ) ) ]\cf0 \
+     \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf7 ### e) Listas\cf0 \
+     \
+	### Las listas son estructuras que pueden almacenar cualquier tipo de objeto\
+	### Creaci\'f3n de listas\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf3  	ejemplo.lista <- list( data.frame1 = ejemplo.data.frame, matriz1 = matriz.4.4, 	matriz.quad = matriz.4.4.quad, vector=resultado)\cf0 \
+\
+	### Acceso a los elementos de una lista\
+    \cf3  ejemplo.lista$matriz1\cf0 \
+     \
+	### Proporciona el nombre de los elementos de la lista\
+     \cf3  attributes(ejemplo.lista )\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf7 ###Grabar R hechos en windows\cf3 \
+	 write.table(ejemplo.data.frame,file=\\mayteecheverry\\Desktop	\\ejemplo_dataframe_fichero.txt)\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 	###Cambiar directorio por defecto de trabajo\cf3 \
+	getwd()\
+	setwd(\'93Z://) ##windows\
+	setwd("/Users/mayteecheverry/Desktop") ###mac\
+	getwd() ###reviso\
+\cf0 	#entonces aqu\'ed ya no har\'e1 falta especificar la ruta\cf3 \
+	write.table(ejemplo.data.frame,file="ejemplo_dataframe_fichero.txt")\
+\
+	\cf0 ##Leer una tabla de datos con \'92 read.table \'92\cf3 \
+\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf2   					#################################\
+  					### FUNCIONES DE ENTRADA/SALIDA\
+  					#################################\cf3 \
+  \
+	\cf0 #### Funciones que trabajan con datos grabados en texto plano\cf3 \
+	\cf2 ## a) Funciones para grabar y leer matrices, data frames (tablas)\cf3 \
+	write.table( ejemplo.data.frame, file="data_frame_R.txt" )\
+  \
+  	ejemplo.lectura.tabla <- read.table( file="data_frame_R.txt" )\
+\
+	\cf2 ###b) Funciones para grabar y leer objetos en binario\cf3 \
+  	save( ejemplo.lectura.tabla, file="ejemplo_tabla.dat")\
+  	save( list=c("ejemplo.lectura.tabla", "ejemplo.data.frame", "matriz.	4.4") ,file="ejemplo_tabla.dat")\
+\
+	load( file="ejemplo_tabla.dat" )\
+  \
+ 					 \cf2 ##################################\
+  					 ## Programaci\'f3n de funciones en R     ##\
+ 					 ##################################\cf3 \
+  \
+	\cf0 ### Definici\'f3n de una funci\'f3n\cf3 \
+  	funcion.ejemplo1 <- function( matriz, vector, c=1 )\{\
+  		\cf0 ## matriz: Es una matriz cuadrada de dimen n x n\
+  		## vector: Vector de tipo num\'e9rico\
+  		## c : constante por defecto = 1\cf3 \
+  	\}\
+  \
+  	\cf0 ### Instrucciones que se utilizan en la programaci\'f3n de funciones\cf3 \
+     \cf2 a) Sentencias condiciones if\cf3 \
+     if ( expresion l\'f3gica 1)\{\
+     		\cf0 ### Operaciones\cf3 \
+     \} else\
+     		\cf0 ## Segundo grupo operaciones\cf3 \
+     \}\
+  \
+     \cf2 b) Bucles for\cf3 \
+     for( i in 1:n )\{\
+      	\cf0 ### Operaciones del bucle\cf3 \
+     \}\
+     \
+     \cf2 c) Bucle while\cf3 \
+     while( condici\'f3n )\{\
+      	\cf0 ### Mientras condici\'f3n sea cierta\cf3 \
+     \}\
+\
+     \cf0 ### Cargar una funci\'f3n en R\cf3 \
+     source("Z://ejemplo_programacion1.txt")\
+     \
+	\cf0 ### Funciones de depuraci\'f3n\
+    	## Introduce una llamada al depurador\cf3 \
+    	browser()\
+	Browse[1]>\
+	n \cf0 ### Indica al depurador que se ejecute la siguiente operaci\'f3n\cf3 \
+	c \cf0 ### Continua la ejecuci\'f3n hasta el siguiente browser()\cf3 \
+	Q \cf0 ### Indica al depurador que salga de la ejecuci\'f3n paso a paso\cf3 \
+\
+\
+							\cf2 ###################################\
+							### Funciones estad\'edsticas b\'e1sicas\
+							###################################\cf3 \
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+\cf0 	\cf2 ## a) Dada una distribuci\'f3n de probabilidad y sus par\'e1metros, calcular la\
+	## densidad de probabilidad en un conjunto de puntos\cf3 \
+\
+	ejemplo.dnorm <- dnorm( x=seq(-0.1, 0.1, length=10), mean=0, sd=0.1 )\
+	ejemplo.dnorm\
+\
+	\cf2 ### b) Generar una muestra finita de datos distribuidos seg\'fan una determinada\
+	### distribuci\'f3n de probabilidad.\cf3 \
+\
+	ejemplo.datos.rnorm <- rnorm( n= 100, mean=0, sd=0.1 )\
+	hist( ejemplo.datos.rnorm, breaks=20 )\
+\
+      \cf0 ###c) Simulaci\'f3n de datos seg\'fan una distribuci\'f3n multivariante\cf3 \
+      library(MASS)\
+	ejemplo.datos.norm.multiv <- mvrnorm( n=300, mu=c(0,0), Sigma=matrix( nrow=2, 	ncol=2, data=c(0.1, 0, 0, 0.01) ) )\
+\
+							\cf2 ########################\
+							# Funciones gr\'e1ficas\
+							########################\cf3 \
+\
+	\cf2 ## a) Funciones univariantes\cf3 \
+	x <- seq(-5, 5, length=100)\
+	f.univ <- function( x ) x^2 + 1\
+\
+	y <- f.univ(x)\
+\
+	y <- f.univ(x)\
+	plot( x, y, xlim=c(-4,4), ylim=range(y), main="funci\'f3n univariante", col="red", 	pch="o", type="l" )\
+\
+	plot( x, y, xlim=c(-4,4), ylim=range(y), main="funci\'f3n univariante", col="red", 	pch="o", type="b" )\
+\
+	plot( x, y, xlim=c(-4,4), ylim=range(y), main="funci\'f3n univariante", col="red", 	pch="o", type="p" )\
+\
+	plot( x, y, xlim=c(-4,4), ylim=range(y), xlab="f.x", ylab="f.y", main="funci\'f3n 	univariante", col="red", pch="o", type="p" )\
+\
+	\cf2 ### b) Visualizar distribuciones en 2 dimensiones\cf3 \
+\
+	plot( normal.dos.dimensiones, xlab="x", ylab="y", col="green", main="distribuci\'f3n 	normal mult")\
+\
+	plot( normal.dos.dimensiones[, 1], normal.dos.dimensiones[, 2], xlab="x", ylab="y", 	col="green", main="distribucion normal mult")\
+\
+	\cf2 #### c ) Visualizar una funci\'f3n de 2 variables\cf3 \
+\
+	\cf0 ### Representaci\'f3n tridimensional\cf3 \
+	x <- seq( -5, 5, length=100 )\
+	y <- seq( -5, 5, length=100 )\
+\
+	funcion.x.y <- function( x, y) x^2 + y^2 + 1\
+\
+	z <- outer( x, y, "funcion.x.y")\
+\
+	persp( x, y, z, theta=30, phi=90, col=2 )\
+\
+	\cf0  ### Curvas de nivel\cf3 \
+ 	contour( x, y, z, col=3 )\
+ \
+	\cf0  ### Gr\'e1ficos de color: Asignan a cada punto un color proporcional el valor de f\cf3 \
+ 	image( x, y, z, col=gray( (0:30)/30) )\
+\
+\
+\cf0 \
+\
+\
+\
+    \
+\
+    \
+}

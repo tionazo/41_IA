@@ -1,0 +1,225 @@
+
+### Ayuda de R
+    ### Proporciona todas las funciones relacionadas con regresión. 
+    ### Utilizamos help.search( "cadena" ) cuando no conocemos la función que necesitamos utilizar. Hace una búsqueda de esta palabra en las funciones implementadas
+help.search( "regression")
+    ### -> abre una ventana en el navegador 
+
+     ### Carga la librería stats
+library( stats)
+
+         ## Para ver las funciones implementadas dentro del paquete stats
+help( package=stats )
+
+      ## Ayuda sobre una función concreta
+help( loess )
+
+##### Objetos de R
+### Vectores, Matrices y Arrays, Data Frames, listas
+
+    ### Vectores
+        ### a) Vectores numéricos
+
+        ## 1) Creación de vectores
+        vector.ejemplo1.nume <- c( 5, 7, 9, 20)
+
+        ## Creación vector con secuencia valores
+        vector.seq.0.100 <- seq( 1, 100, by=1 )
+        vector.seq.0.100 <- 1:100
+
+        vector.seq.0.1.100 <- seq( 0, 1, length=100)
+        
+        ## Creación vector repitiendo valores o secuencias de valores
+        vector.300a.700r <- rep( c( 1, 0), c(300, 700) )
+        vector.rep <- rep( c(1,0), 100)
+
+        ### 2) Acceso a las posiciones de un vector
+        vector.seq.0.100[ c(3,8,20 ) ]
+         # índices negativos visualizan todo el vector excepto las posiciones señaladas por el vector de índices
+        vector.seq.0.100[ -c(3,8,20 ) ]
+        ### Se pueden utilizar expresiones lógicas para seleccionar elementos del vector
+        vector.seq.0.100[ vector.seq.0.100> 80 ]
+        vector.seq.0.100[ vector.seq.0.100> 80 & vector.seq.0.100< 90 ]
+        vector.seq.0.100[ vector.seq.0.100> 80 | vector.seq.0.100< 10 ]
+
+        ## 3) Operaciones con vectores
+        vector.seq.0.100[ 1:10 ] + seq( 0, 1, length=10 )
+        
+        sqrt( vector.seq.0.100[ 1:10 ] )
+        log( vector.seq.0.100[ 1:10 ] )
+        ( vector.seq.0.100[ 1:10 ] )^3
+        
+        min( vector.seq.0.100[ 1:10 ] )
+        max( vector.seq.0.100[ 1:10 ] )
+        mean( vector.seq.0.100[ 1:10 ] )
+        sd( vector.seq.0.100[ 1:10 ] )
+        var( vector.seq.0.100[ 1:10 ] )
+
+        ### b) Vectores de tipo carácter
+        vector.ejemplo.caracter <- c( "ana", "juan", "pedro")
+        vector.ejemplo.caracter.rep <- rep( c( "ana", "juan", "pedro"), c(10, 30, 10 ) )
+        vector.creditos.caracter <- rep( c("aceptado", "denegado"), c(300, 700) )
+        
+        ### Se puede transformar un vector carácter en un factor
+        vector.ejemplo.caracter.rep.factor <- factor( vector.ejemplo.caracter.rep )
+        vector.ejemplo.caracter.rep.factor
+
+[1] ana   ana   ana   ana   ana   ana   ana   ana   ana   ana   juan  juan  juan  juan  juan
+[16] juan  juan  juan  juan  juan  juan  juan  juan  juan  juan  juan  juan  juan  juan  juan
+[31] juan  juan  juan  juan  juan  juan  juan  juan  juan  juan  pedro pedro pedro pedro pedro
+[46] pedro pedro pedro pedro pedro
+Levels: ana juan pedro
+
+        ## Búsqueda de expresiones en vectores caracter
+        match(  vector.creditos.caracter, "aceptado")
+        
+    ### b) Matrices
+    ### Creación de matrices
+     matriz.4.4 <- matrix( nrow=4, ncol=4, data=1:16 )
+     ### Si queremos llenar la matriz por filas
+     matriz.4.4 <- matrix( nrow=4, ncol=4, data=1:16, byrow=T )
+     
+     ### Acceso a filas y columnas de la matriz
+     matriz.4.4[ c(2,3), 3:4 ]
+
+     ## Se puede acceder a una fila o columna utilizando condiciones lógicas
+     #suma de las filas de la matriz.4.4 y la guardamos en el vector suma.fila.matriz.4.4
+     # el operador c concatena en un vector las operaciones que indicamos dentro. En este caso las sumas de los elementos de cada fila. 
+     #Para referenciar una posicion concreta de la matriz:  matriz[Fila, Columna]
+     #Para referenciar una fila completa de la matriz:  matriz[Fila, ]
+     #Para referenciar una columna completa de la matriz:  matriz[ , Columna]
+
+    suma.fila.matriz.4.4 <- c( sum( matriz.4.4[1, ] ), sum( matriz.4.4[2, ] ), sum( matriz.4.4[3, ] ), sum( matriz.4.4[4, ] ) )
+
+    # al dejar la parte de las columnas en blanco, nos da como resultado una matriz ordenada por filas y columnas
+    matriz.4.4[ suma.fila.matriz.4.4 < 40, ]
+    matriz.4.4[ suma.fila.matriz.4.4 < 50 & suma.fila.matriz.4.4> 10 , ]
+    
+    ### Funciones recursivas para aplicarlas a cada fila o columna de una matriz
+    ### El objetivo de estas funciones es *evitar la utilización de bucles* for etc.
+
+    # apply nos permite realizar cálculos recursivos sobre las filas y/o columnas
+    suma.fila.matriz.4.4.apply <- apply( matriz.4.4, MARGIN=1, FUN='sum')
+      # MARGIN : 1== Filas; 2== Columnas
+      # FUN : función a aplicar
+      # esta orden es equivalente a la función anterior 
+        #suma.fila.matriz.4.4 <- c( sum( matriz.4.4[1, ] ), sum( matriz.4.4[2, ] ), sum( matriz.4.4[3, ] ), sum( matriz.4.4[4, ] ) )
+        # pero es mucho más óptima
+
+    max.columna.matriz.4.4 <- apply( matriz.4.4, MARGIN=2, FUN='max')
+    
+    matriz.4.4[ , max.columna.matriz.4.4 > 13 ]
+    
+    ### Operaciones con matrices
+
+    #Elevamos los componentes de la matriz al cuadrado
+    matriz.4.4.quad <- matriz.4.4^2
+
+    ### Producto componente a componente
+    matriz.4.4 * matriz.4.4.quad
+
+    ## Producto matricial
+    matriz.4.4 %*% matriz.4.4.quad
+    
+    ### Traspuesta de una matriz
+    t( matriz.4.4 )
+    
+    #estas operaciones equivalentes nos devuelven el módulo al cuadrado de la matriz.4.4
+      #este cálculo es muy últil en I.A.
+    t( matriz.4.4 ) %*% matriz.4.4
+    crossprod( matriz.4.4 )
+
+    
+    ### Dimensión matriz, nombres filas columnas
+    ## Asignar nombre a las filas
+    rownames(matriz.4.4)
+    NULL
+    
+    rownames(matriz.4.4) <- c("x1", "x2", "x3", "x4")
+    matriz.4.4
+    
+    ## Asignar nombre columnas
+    colnames(matriz.4.4) <- c("edad", "ingresos", "educacion", "respuesta")
+    matriz.4.4
+
+
+
+
+
+    
+    ### c) Arrays
+    ### Son objetos más generales que las matrices puediendo ser tridimensionales ...
+      ## las mismas operaciones que se aplican a las matrices son válidas para los arrays
+    
+    ### Creación (creamos un objeto que almacena 4 matrices 5x5
+    
+    array.4.5.5 <- array( dim= c(5,5, 4), data=1:100 )
+    
+    ### Dimensión array
+    dim( array.4.5.5)
+    #### Seleccionar elementos array
+
+    array.4.5.5[ , , c(3,4) ]
+    
+    #### Concatenacion de arrays y matrices por filas y columnas
+
+    ### concatenar por filas
+    array.conc.fil <- rbind( array.4.5.5[ , , 3], array.4.5.5[ , , 4] )
+    array.conc.fil
+    
+    ### concatenar por columnas
+    array.conc.col <- cbind( array.4.5.5[ , , 3], array.4.5.5[ , , 4] )
+    array.conc.col
+    
+
+
+
+
+
+    ### d) Data frames
+
+    ### Permiten incluir en el mismo objeto matrices, arrays, vectores numéricos y carácter
+    ### con la ÚNICA RESTRICCIÓN de tener el MISMO NÚMERO DE FILAS
+    
+    resultado <- c("aceptado", "rechazado", "rechazado", "aceptado")
+
+    ### Creación data frames
+    ejemplo.data.frame <- data.frame( matriz1 =  matriz.4.4, matriz.quad = matriz.4.4.quad, resultado = resultado)
+    ejemplo.data.frame
+    
+    ### Acceso a los elementos del data frame. Exactamente igual que en matrices. Indicando filas, columnas por índices o condiciones
+     ejemplo.data.frame[ c(2,3), ] ## filas 2,3
+     ejemplo.data.frame[ , 9 ] ## columna 9
+     ejemplo.data.frame$resultado ## Equivalente a acceder a la columna 9 que se llama resultado
+     ejemplo.data.frame$resultado[1:2] ### Seleccionamos los dos primeros valores de esa columna.
+
+     ### Seleccion de todas columnas correspondientes a matriz1
+     # grep 
+     ejemplo.data.frame[ , grep( "matriz1", colnames( ejemplo.data.frame ) ) ]
+
+
+
+
+
+
+
+     
+     ### e) Listas
+     
+     ### Las listas son estructuras que pueden almacenar cualquier tipo de objeto. Varios objetos de distintos tipos
+     
+     ### Creación de listas
+      #list( nombreQueLeDamos = nombreObjetoAIncorporar )
+ ejemplo.lista <- list( data.frame1 = ejemplo.data.frame, matriz1 = matriz.4.4, matriz.quad = matriz.4.4.quad, vector=resultado)
+
+     ### Acceso a los elementos de una lista
+     ejemplo.lista$matriz1
+     
+      ### Proporciona el nombre de los elementos de la lista
+      attributes(ejemplo.lista )
+
+
+
+    
+
+    

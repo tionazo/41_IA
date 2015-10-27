@@ -1,0 +1,383 @@
+% Cargamos primeramente los datos:
+
+load -import doc.bin.304
+load -import pendigits.muestra
+
+addpath("/discob/toolbox_octave/netlab")
+
+% Problema de regresión para la función seno con ruido
+
+% Creamos primeramente los datos
+ndatos=50;
+sigma= 0.1;
+x = (linspace(0,1,ndatos) )';
+y = sin( 2 * pi * x) + sigma * randn( ndatos, 1);
+
+% Nomalizamos la variable x para que tenga media 0 y desviación standar 1
+
+mu = mean(x);
+sigma = sqrt( sumsq( x - mean(x) ) / (ndatos-1) );
+x_train = (x - mu)./(sigma);
+
+% Creamos la estructura que almacena la red
+
+% Inicializamos el generador de números aleatorios
+randn('seed', 40);
+
+entradas = 1;
+n_capa_oculta =7;
+n_capa_salida=1;
+
+gauss_seno = rbf( entradas, n_capa_oculta, n_capa_salida, 'gaussian');
+gauss_seno
+
+% Estimamos los centros de la red mediante un modelo de mixturas
+% con matriz de covarianza identidad. Los parámetros de la capa de
+% salida se estiman mediante una pseudoinversa.
+
+options(1) = 1; % Proporciona los valores del error durante el algoritmo EM
+options(14) = 10; % Máximo número de iteraciones para el EM. Con pocas iteraciones
+% Vale para situar aproximadamente los centros.
+
+gauss_seno = rbftrain( gauss_seno, options, x_train, y);
+
+% Generamos el conjunto de test para evaluar la capacidad de generalización
+val_test = [ min(x):0.05:max(x) ]';
+y_test = sin( 2 * pi * val_test); % Curva que debe predecir
+
+% Normalizamos la variable x como antes
+val_test_norm = (val_test-mu)./(sigma);
+
+% Realizamos la predicción para los puntos de test
+y= rbffwd( gauss_seno, val_test_norm);
+
+% Dibujamos las curvas seno y la predicha por la red
+plot( val_test_norm, y_test, "-r", val_test_norm, y, "-b")
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Problema de clasificación
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Clasificación para 2 espirales concéntricas
+
+% Generamos primeramente los datos de las espirales
+
+ndatos= 150; % 150 datos para cada clase
+theta = (linspace( 0, 2*pi, ndatos))';
+t1 = (linspace(0, 1, ndatos))';
+t2 = 0.5 + 1.5 * t1;
+sigma = 0.1; % Desviación estandar para el ruido añadido
+
+% Primera espiral
+x1 = t1 .* cos(theta) + sigma * randn( ndatos, 1);
+y1 = t1 .* sin(theta) + sigma * randn(ndatos, 1);
+
+% Segunda espiral
+x2 = t2 .* cos(theta) + sigma * randn( ndatos, 1);
+y2 = t2 .* sin(theta) + sigma * randn( ndatos, 1);
+
+espiral = [x1 y1; x2 y2];
+etiqueta = [ones(ndatos, 1); 2 * ones( ndatos, 1)];
+espiral = [ espiral etiqueta];
+
+% Dibujamos los datos
+plot( espiral( 1:ndatos ,1), espiral( 1:ndatos ,2), "@r", espiral( ndatos+1:2*ndatos ,1), espiral( ndatos+1:2*ndatos ,2), "@b")
+
+% Creamos una muestra aleatoria para entrenamiento y test
+muestra = randperm(2*ndatos);
+datosm = 2 * round(0.8 * ndatos);
+muestra_t = muestra(datosm+1:2*ndatos);
+muestra = muestra(1:datosm);
+
+% Creamos la estructura de una red RBF con 15 neuronas en la capa oculta
+% y 2 en la de salida (problema de clasificación con 2 clases)
+
+entradas = 2;
+n_capa_oculta=25;
+n_capa_salida=2;
+
+gauss_espiral = rbf( entradas, n_capa_oculta, n_capa_salida, 'gaussian');
+
+% Se sugiere al alumno que prueba otras funciones en la capa oculta no gaussianas.
+
+% Estimamos los parámetros de la red. 
+% Para la capa oculta se calculan los centros con un modelo de mixturas y componentes normales.
+% La sigma para las normales se toma como el máximo de las distancias entre centros.
+
+% Las etiquetas se deben codificar de tal forma que para cada dato sólo la columna asociada
+% a la clase a la que pertenece el dato sea 1. Hacemos esa transformación como:
+
+etiquetas =[ espiral(:,3)==1 espiral(:,3)==2];
+
+%options = foptions;
+options(1) = 1; % Visualiza el error para el algoritmo iterativo EM
+options(14)=25; % Número máximo de iteraciones para el algoritmo EM
+
+gauss_espiral= rbftrain( gauss_espiral, options, espiral(muestra, 1:2), etiquetas(muestra,:) );
+
+% Dibujamos los puntos donde se han puesto los centros:
+hold on
+plot(gauss_espiral.c(:,1), gauss_espiral.c(:,2), "@g")
+
+% Calculamos las probabilidades de clase para los puntos de entrenamiento y test.
+y_ent = rbffwd( gauss_espiral, espiral(muestra, 1:2) );
+y_test = rbffwd( gauss_espiral, espiral(muestra_t, 1:2) );
+
+% Estimamos los errores y matriz de confusion tanto para el entrenamiento como para el test.
+[ matriz_confusion_ent, error_ent] = confmat(y_ent, etiquetas(muestra,:) );
+
+[ matriz_confusion_test, error_test] = confmat(y_test, etiquetas(muestra_t,:) );
+
+%Visualizamos los resultados
+
+matriz_confusion_ent
+error_ent
+
+matriz_confusion_test
+error_test
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Repetimos el proceso anterior pero ahora vamos a situar los centros de la capa oculta
+% mediante un algoritmo K-medias. La desviación estandar se sigue mantiendo como
+% la máxima distancia entre centros.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Fijamos las opciones para el algoritmo k-medias
+%options = foptions;
+options(1) = 1; % Imprime los valores del error
+options(14)=10 % Número máximo de iteraciones para el algoritmo k-medias
+
+% Inicializamos los centros de kmedias aleatoriamente
+ncentros = n_capa_oculta;
+muestra_aleat = muestra( randperm( length(muestra) ) ); %Permuta aleatoriamente los índices de muestra
+muestra_aleat = muestra_aleat(1:ncentros);  %Se queda con las primeras componentes
+
+centros_aleat = espiral( muestra_aleat, 1:2);
+
+% Obtenemos los centros con kmedias
+centros_kmedias = kmeans( centros_aleat, espiral(muestra, 1:2), options);
+
+% Generamos la estructura de la red
+gauss_espiral_kmedias = rbf( entradas, n_capa_oculta, n_capa_salida, 'gaussian');
+
+% Rellenamos los centros y desviación estandar en la estructura generada
+
+gauss_espiral_kmedias.c = centros_kmedias;
+gauss_espiral_kmedias.wi = gauss_espiral.wi; % Las sigma_i son iguales al caso anterior
+
+[y, act_kmedias] = rbffwd( gauss_espiral_kmedias, espiral(muestra, 1:2) ); % Obtenemos las funciones de
+% activación con los parámetros calculados para la capa oculta
+
+% Calculamos ahora los pesos de la capa de salida mediante la pseudoinversa
+temp = pinv( [act_kmedias ones( length(muestra), 1) ] ) * etiquetas(muestra, :); % Etiqueta es la matriz t de salida
+gauss_espiral_kmedias.w2 = temp( 1:n_capa_oculta, :);
+gauss_espiral_kmedias.b2 = temp( n_capa_oculta + 1, :);
+
+% Calculamos las matrices de confusion y errores como en el caso anterior
+
+y_ent = rbffwd( gauss_espiral_kmedias, espiral(muestra, 1:2) ); % salida para los datos de entrenamiento
+y_test = rbffwd( gauss_espiral_kmedias, espiral(muestra_t, 1:2) ); % salida para los datos de test
+
+% Estimamos los errores y matriz de confusion tanto para el entrenamiento como para el test.
+[ matriz_confusion_ent, error_ent] = confmat( y_ent, etiquetas(muestra,:) );
+
+[ matriz_confusion_test, error_test] = confmat( y_test, etiquetas(muestra_t,:) );
+
+%Visualizamos los resultados
+
+matriz_confusion_ent
+error_ent
+
+matriz_confusion_test
+error_test
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Repetimos el procedimiento anterior pero generando los centros aleatoriamente
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Generamos la estructura de la red
+gauss_espiral_aleat = rbf( entradas, n_capa_oculta, n_capa_salida, 'gaussian');
+
+% Rellenamos los centros y desviación estandar en la estructura generada
+
+gauss_espiral_aleat.c = centros_aleat;
+gauss_espiral_aleat.wi = gauss_espiral.wi; % Las sigma_i son iguales al caso anterior
+
+[y, act_aleat] = rbffwd( gauss_espiral_aleat, espiral(muestra, 1:2) ); % Obtenemos las funciones de
+% activación con los parámetros calculados para la capa oculta
+
+% Calculamos ahora los pesos de la capa de salida mediante la pseudoinversa
+temp = pinv( [act_aleat ones( length(muestra), 1) ] ) * etiquetas(muestra, :); % Etiqueta es la matriz t de salida
+gauss_espiral_aleat.w2 = temp( 1:n_capa_oculta, :);
+gauss_espiral_aleat.b2 = temp( n_capa_oculta + 1, :);
+
+% Calculamos las matrices de confusion y errores como en el caso anterior
+
+y_ent = rbffwd( gauss_espiral_aleat, espiral(muestra, 1:2) ); % salida para los datos de entrenamiento
+y_test = rbffwd( gauss_espiral_aleat, espiral(muestra_t, 1:2) ); % salida para los datos de test
+
+% Estimamos los errores y matriz de confusion tanto para el entrenamiento como para el test.
+[ matriz_confusion_ent, error_ent] = confmat( y_ent, etiquetas(muestra,:) );
+
+[ matriz_confusion_test, error_test] = confmat( y_test, etiquetas(muestra_t,:) );
+
+%Visualizamos los resultados
+
+matriz_confusion_ent
+error_ent
+
+matriz_confusion_test
+error_test
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Aplicamos la red RBF al problema de documentos
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Creamos la estructura de una red RBF con 20 neuronas en la capa oculta
+% y 2 en la de salida (problema de clasificación con 2 clases)
+
+entradas = 514;
+n_capa_oculta=30;
+n_capa_salida=4;
+
+gauss_docs = rbf( entradas, n_capa_oculta, n_capa_salida, 'gaussian');
+%options = foptions;
+options(1) = 1;
+%options(5)=10; % Número máximo de iteraciones para el algoritmo EM
+options(14) = 20; % Iteraciones para el algoritmo K-medias.
+
+% Obtenemos la muestra de entrenamiento y de test.
+muestra = randperm(304);
+datos_m= round( 0.8 * 304);
+muestra_t= muestra( (datos_m+1):304);
+muestra = muestra(1:datos_m);
+
+% Estimamos los parámetros de la red. 
+
+% Las etiquetas se deben codificar de tal forma que para cada dato sólo la 
+% columna asociada
+% a la clase a la que pertenece el dato sea 1. Hacemos esa transformación como:
+
+etiquetas =[ doc(:,515)==1 doc(:,515)==2 doc(:,515)==3 doc(:,515)==4];
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Obtenemos los centros con kmedias
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+centros_kmedias = kmeans( doc(1:n_capa_oculta, 1:514), doc(muestra, 1:514), options);
+
+% Rellenamos los centros y desviación estandar en la estructura generada
+
+gauss_docs.c = centros_kmedias;
+cdist = dist2(centros_kmedias, centros_kmedias);
+maxdist = max(max(cdist));
+gauss_docs.wi = (maxdist/size( gauss_docs.wi,2)) * ones(size(gauss_docs.wi));
+
+[y, act_kmedias] = rbffwd( gauss_docs, doc(muestra, 1:514) ); % Obtenemos las funciones de
+% activación con los parámetros calculados para la capa oculta
+
+
+% Calculamos ahora los pesos de la capa de salida mediante la pseudoinversa
+temp = pinv( [act_kmedias ones( length(muestra), 1) ] ) * etiquetas(muestra, :); % Etiqueta es la matriz t de salida
+gauss_docs.w2 = temp( 1:n_capa_oculta, :);
+gauss_docs.b2 = temp( n_capa_oculta + 1, :);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%gauss_docs= rbftrain( gauss_docs, options, doc(muestra, 1:514), etiquetas(muestra,:) );
+
+
+% Calculamos las probabilidades de clase para los puntos de entrenamiento y test.
+y_ent = rbffwd( gauss_docs, doc(muestra, 1:514) );
+y_test = rbffwd( gauss_docs, doc(muestra_t, 1:514) );
+
+% Estimamos los errores y matriz de confusion tanto para el entrenamiento como para el test.
+[ matriz_confusion_ent, error_ent] = confmat( y_ent, etiquetas(muestra,:) );
+
+[ matriz_confusion_test, error_test] = confmat( y_test, etiquetas(muestra_t,:) );
+
+%Visualizamos los resultados
+
+matriz_confusion_ent
+error_ent
+
+matriz_confusion_test
+error_test
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Aplicamos la red RBF al problema de los dígitos manuscritos
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Creamos la estructura de una red RBF con 20 neuronas en la capa oculta
+% y 2 en la de salida (problema de clasificación con 2 clases)
+
+entradas = 256;
+n_capa_oculta=20;
+n_capa_salida=10;
+
+gauss_pendigits = rbf( entradas, n_capa_oculta, n_capa_salida, 'gaussian');
+%options = foptions;
+options(1) = 1;
+%options(5)=10; % Número máximo de iteraciones para el algoritmo EM
+options(14) = 20; % Iteraciones para el algoritmo K-medias.
+
+% Obtenemos la muestra de entrenamiento y de test.
+muestra = randperm(2000);
+datos_m= round( 0.8 * 2000);
+muestra_t= muestra( (datos_m+1):2000);
+muestra = muestra(1:datos_m);
+
+% Estimamos los parámetros de la red. 
+
+% Las etiquetas se deben codificar de tal forma que para cada dato sólo la 
+% columna asociada
+% a la clase a la que pertenece el dato sea 1. Hacemos esa transformación como:
+
+etiquetas = [ pendigits(:,1)==0];
+for i=1:9
+etiquetas =[ etiquetas pendigits(:,1)==i];
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Obtenemos los centros con kmedias
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+centros_kmedias = kmeans( pendigits(1:n_capa_oculta, 2:257), pendigits(muestra, 2:257), options);
+
+% Rellenamos los centros y desviación estandar en la estructura generada
+
+gauss_pendigits.c = centros_kmedias;
+cdist = dist2(centros_kmedias, centros_kmedias);
+maxdist = max(max(cdist));
+gauss_pendigits.wi = (maxdist/size( gauss_pendigits.wi,2) ) * ones(size(gauss_pendigits.wi));
+
+[y, act_kmedias] = rbffwd( gauss_pendigits, pendigits(muestra, 2:257) ); % Obtenemos las funciones de
+% activación con los parámetros calculados para la capa oculta
+
+
+% Calculamos ahora los pesos de la capa de salida mediante la pseudoinversa
+temp = pinv( [act_kmedias ones( length(muestra), 1) ] ) * etiquetas(muestra, :); % Etiqueta es la matriz t de salida
+gauss_pendigits.w2 = temp( 1:n_capa_oculta, :);
+gauss_pendigits.b2 = temp( n_capa_oculta + 1, :);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Calculamos las probabilidades de clase para los puntos de entrenamiento y test.
+y_ent = rbffwd( gauss_pendigits, pendigits(muestra, 2:257) );
+y_test = rbffwd( gauss_pendigits, pendigits(muestra_t, 2:257) );
+
+% Estimamos los errores y matriz de confusion tanto para el entrenamiento como para el test.
+[ matriz_confusion_ent, error_ent] = confmat( y_ent, etiquetas(muestra,:));
+
+[ matriz_confusion_test, error_test] = confmat( y_test, etiquetas(muestra_t,:) );
+
+%Visualizamos los resultados
+
+matriz_confusion_ent
+error_ent
+
+matriz_confusion_test
+error_test
+

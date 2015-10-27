@@ -1,0 +1,48 @@
+Problema de regresión
+
+x <- seq(0, 2*pi, length=150 )
+plot( x, sin(x), type="l", col=2)
+seno <- cbind( x, y= sin( x)+ rnorm( 150, 0, 0.15 ) )
+muestra <- sample( 1:150, 120 )
+entrena <- seno[muestra, ]
+
+seno.nnet <- nnet( seno[muestra,1], seno[muestra,2], size=2, linout=T, maxit=200 )
+seno.test <- predict.nnet( seno.nnet, as.matrix(seno[-muestra,1]), type="raw")
+plot(seno[-muestra,1], seno.test, col=4)
+
+Errores  Entrenamiento/test
+crossprod( seno[muestra,2]-seno.nnet$fitted.values )/120
+crossprod( seno[-muestra,2]-seno.test )/30
+
+seno.nnet <- nnet( seno[muestra,1], seno[muestra,2], size=25, linout=T, maxit=300 )
+seno.test <- predict.nnet( seno.nnet, as.matrix(seno[-muestra,1]), type="raw")
+plot( seno[-muestra,1], sin(seno[-muestra,1]), col=2, type="l")
+points(seno[-muestra,1], seno.test, col=4)
+x11()
+plot(seno[muestra,1], seno.nnet$fitted.values, col=4)
+points( seno[muestra,1], seno[muestra,2], col=2, pch="*")
+crossprod( seno[muestra,2]-seno.nnet$fitted.values )/120
+crossprod( seno[-muestra,2]-seno.test )/30
+
+data(trees)
+muestra <- sample( 1:31, 24 )
+trees.nnet <- nnet( trees[muestra,1:2], trees[muestra,3], size=15, linout=T, maxit=200)
+trees.pred <- predict.nnet( trees.nnet, trees[-muestra,1:2], type="raw")
+crossprod( trees.nnet$fitted.values - trees[muestra,3] )/24
+crossprod( trees.pred- trees[-muestra,3 ] )/7
+
+trees.nnet <- nnet( trees[muestra,1:2], trees[muestra,3], size=10, linout=T, maxit=200)
+trees.pred <- predict.nnet( trees.nnet, trees[-muestra,1:2], type="raw")
+crossprod( trees.nnet$fitted.values - trees[muestra,3] )/24
+crossprod( trees.pred- trees[-muestra,3 ] )/7
+
+Estimación peso mejillones
+load("mussels")
+mejillones <- mussels
+muestra <- sample( 1:82, 65 )
+mejillones.nnet <- nnet( mejillones[muestra, -3], mejillones[muestra,3], size=20, linout=T, maxit=200, decay=1e-3)
+mejillones.pred <- predict.nnet( mejillones.nnet, mejillones[-muestra,-3], type="raw")
+crossprod( mejillones.nnet$fitted.values - mejillones[muestra,3] )/65
+crossprod( mejillones.pred- mejillones[-muestra,3 ] )/17
+
+
